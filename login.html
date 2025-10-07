@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Daxil ol - Atlan FK</title>
+  <link rel="stylesheet" href="assets/styles.css">
+  <script src="assets/config.js"></script>
+</head>
+<body>
+  <header class="site-header">
+    <div class="container nav">
+      <a class="brand" href="index.html">
+        <img class="logo" src="assets/logo.png" alt="Atlan FK">
+        <span>Atlan fk</span>
+      </a>
+      <nav class="nav-links">
+        <a href="register.html">Qeydiyyat</a>
+      </nav>
+    </div>
+  </header>
+  <main>
+    <section class="section">
+      <div class="container narrow">
+        <h1>Daxil ol</h1>
+        <div class="form-card">
+          <label>İstifadəçi adı
+            <input id="auth-username" type="text" placeholder="İstifadəçi adınız">
+          </label>
+          <label>Şifrə
+            <input id="auth-password" type="password" placeholder="Şifrə">
+          </label>
+          <div style="display:flex;gap:10px">
+            <button class="btn btn-primary" id="btn-login">Daxil ol</button>
+            <a class="btn" href="register.html">Qeydiyyat</a>
+          </div>
+          <p id="auth-status" class="form-status"></p>
+        </div>
+      </div>
+    </section>
+  </main>
+  <script>
+  if(window.PUBLIC_MODE){ location.href='index.html'; }
+  const statusEl = document.getElementById('auth-status');
+  const username=()=>document.getElementById('auth-username').value.trim();
+  const password=()=>document.getElementById('auth-password').value;
+  document.getElementById('btn-login').onclick=async()=>{
+    statusEl.textContent='Yoxlanılır...';
+    try{
+    const res=await fetch((window.API_BASE||'')+'/api/auth/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username:username(),password:password()})});
+      const data=await res.json().catch(()=>({}));
+      if(res.ok){
+        localStorage.setItem('atlanfk_token', data.token);
+        statusEl.textContent='Xoş gəldiniz, '+data.user.username+' ('+data.user.role+')';
+        setTimeout(()=>{location.href='index.html';},600);
+      }else{
+        statusEl.textContent='Xəta: '+(data.error||res.status||'server');
+      }
+    }catch(err){
+      statusEl.textContent='Bağlantı qurula bilmədi. Lütfən serveri çalışdırın: npm run start və http://localhost:3030 üzerinden açın.';
+    }
+  };
+  </script>
+</body>
+</html>
+
+

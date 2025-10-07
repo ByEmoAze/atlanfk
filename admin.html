@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Admin Panel - Atlan FK</title>
+  <link rel="stylesheet" href="assets/styles.css">
+  <script src="assets/config.js"></script>
+</head>
+<body>
+  <header class="site-header">
+    <div class="container nav">
+      <a class="brand" href="index.html">
+        <img class="logo" src="assets/logo.png" alt="Atlan FK">
+        <span>Atlan fk</span>
+      </a>
+      <nav class="nav-links">
+        <a href="index.html">Ana səhifə</a>
+      </nav>
+    </div>
+  </header>
+  <main>
+    <section class="section">
+      <div class="container">
+        <h1>Admin Panel</h1>
+        <div class="card" style="margin-bottom:16px">
+          <h2>Aktiv Adminlər</h2>
+          <div id="admins"></div>
+        </div>
+        <div class="card" style="margin-bottom:16px">
+          <h2>Admin Düzenlə</h2>
+          <div style="display:grid;gap:10px;max-width:520px">
+            <input id="edit-id" placeholder="Admin ID (listeden)">
+            <input id="edit-username" placeholder="Yeni istifadəçi adı (opsiyonel)">
+            <input id="edit-password" type="password" placeholder="Yeni şifrə (opsiyonel)">
+            <button class="btn btn-primary" id="btn-update">Yenilə</button>
+            <p id="admin-status" class="form-status"></p>
+          </div>
+        </div>
+        <div class="card">
+          <h2>Yeni Admin əlavə et</h2>
+          <div style="display:grid;gap:10px;max-width:520px">
+            <input id="new-username" placeholder="İstifadəçi adı">
+            <input id="new-email" placeholder="gmail/outlook/hotmail/mail domenli email">
+            <input id="new-password" type="password" placeholder="Şifrə">
+            <button class="btn btn-primary" id="btn-create">Yarat</button>
+            <p id="create-status" class="form-status"></p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+  <script>
+    if(window.PUBLIC_MODE){ location.href='index.html'; }
+    const token = localStorage.getItem('atlanfk_token');
+    const statusEl=document.getElementById('admin-status');
+    if(!token){
+      location.href='auth.html';
+    }
+    async function requireSuperadmin(){
+      const res = await fetch((window.API_BASE||'')+'/api/auth/me',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({token})});
+      const data = await res.json();
+      if(!res.ok || data.user.role!=='superadmin'){
+        alert('Yalnız üstadmin daxil ola bilər.');
+        location.href='index.html';
+      }
+    }
+    async function loadAdmins(){
+      const res = await fetch((window.API_BASE||'')+'/api/auth/admins/list',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({token})});
+      const data = await res.json();
+      const el=document.getElementById('admins');
+      el.innerHTML='';
+      if(res.ok){
+        const table=document.createElement('table');
+        table.style.width='100%';
+        const head=document.createElement('tr');
+        head.innerHTML='<th>ID</th><th>İstifadəçi adı</th><th>Email</th>';
+        table.appendChild(head);
+        data.admins.forEach(a=>{
+          const tr=document.createElement('tr');
+          tr.innerHTML=`<td>${a.id}</td><td>${a.username}</td><td>${a.email}</td>`;
+          table.appendChild(tr);
+        });
+        el.appendChild(table);
+      }else{
+        el.textContent='Yüklənə bilmədi';
+      }
+    }
+    document.getElementById('btn-update').onclick=async()=>{
+      const id=document.getElementById('edit-id').value.trim();
+      const username=document.getElementById('edit-username').value.trim();
+      const password=document.getElementById('edit-password').value;
+      const res=await fetch((window.API_BASE||'')+'/api/auth/admins/update',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({token,id,username,password})});
+      const data=await res.json().catch(()=>({}));
+      statusEl.textContent = res.ok ? 'Yeniləndi' : ('Xəta: '+(data.error||res.status||'server'));
+      loadAdmins();
+    };
+    document.getElementById('btn-create').onclick=async()=>{
+      const username=document.getElementById('new-username').value.trim();
+      const email=document.getElementById('new-email').value.trim();
+      const password=document.getElementById('new-password').value;
+      const res=await fetch((window.API_BASE||'')+'/api/auth/admins/create',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({token,username,email,password})});
+      const data=await res.json().catch(()=>({}));
+      document.getElementById('create-status').textContent = res.ok ? 'Yaradıldı' : ('Xəta: '+(data.error||res.status||'server'));
+      loadAdmins();
+    };
+    (async()=>{await requireSuperadmin(); await loadAdmins();})();
+  </script>
+</body>
+</html>
+
+

@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Əlaqə - Atlan FK</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="icon" href="assets/logo.png" type="image/png">
+  <link rel="apple-touch-icon" href="assets/logo.png">
+  <meta property="og:title" content="Əlaqə - Atlan FK">
+  <meta property="og:description" content="Atlan FK ilə əlaqə saxlayın.">
+  <meta property="og:image" content="assets/logo.png">
+  <meta name="twitter:card" content="summary">
+  <link rel="stylesheet" href="assets/styles.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="container nav">
+      <a class="brand" href="index.html">
+        <img class="logo" src="assets/logo.png" alt="Atlan FK">
+        <span>Atlan fk</span>
+      </a>
+      <nav class="nav-links">
+        <a href="index.html#about">Atlan FK</a>
+        <a href="index.html#squad">Komanda</a>
+        <a class="btn btn-primary" href="contact.html">Qatılın</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="section">
+      <div class="container narrow">
+        <h1>Əlaqə saxlamaq üçün yazın</h1>
+        <p class="muted-text">Atlan fk Rəsmi gmailə gəlir — mailləriniz qorunur.</p>
+        <form id="contact-form" class="form-card" novalidate data-endpoint="https://formspree.io/f/movklzrj">
+          <label>Ad
+            <input type="text" name="name" placeholder="İsminizi girin" required>
+          </label>
+          <label>E-mail <span class="req">*</span>
+            <input type="email" name="email" placeholder="Enter your email" required>
+          </label>
+          <label>Mesajınız
+            <textarea name="message" rows="5" placeholder="Yazınızı girin"></textarea>
+          </label>
+          <label class="checkbox">
+            <input type="checkbox" required>
+            <span>Şərtlər və Məxfilik siyasəti ilə razıyam</span>
+          </label>
+          <button class="btn btn-primary" type="submit">Göndər</button>
+          <p id="form-status" class="form-status" role="status" aria-live="polite"></p>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container foot">
+      <span>© 2025 Atlan fk</span>
+      <nav>
+        <a href="index.html">Ana səhifə</a>
+        <a href="contact.html">Əlaqə</a>
+      </nav>
+    </div>
+  </footer>
+  <script src="assets/main.js"></script>
+</body>
+</html>
+
+
